@@ -6,6 +6,9 @@ const game = new Phaser.Game(480, 320, Phaser.CANVAS, null, {
 
 let ball;
 let paddle;
+let bricks;
+let newBrick;
+let brickInfo;
 
 function preload() {
   //Scale the canvas while respecting aspect ratio
@@ -17,6 +20,7 @@ function preload() {
 
   game.load.image("ball", "./images/ball.png");
   game.load.image("paddle", "./images/paddle.png");
+  game.load.image("brick", "./images/brick.png");
 }
 function create() {
   game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -59,6 +63,8 @@ function create() {
 
   //Prevent the ball from pushing the paddle
   paddle.body.immovable = true;
+
+  initBricks();
 }
 function update() {
   //Make the ball bounce off the paddle
@@ -67,3 +73,35 @@ function update() {
   //move the paddle to the middle of the screen or the mouse's x position if it is inside the canvas
   paddle.x = game.input.x || game.world.width * 0.5;
 }
+
+const initBricks = () => {
+  brickInfo = {
+    width: 50,
+    height: 20,
+    count: {
+      row: 3,
+      col: 7,
+    },
+    offset: {
+      top: 50,
+      left: 60,
+    },
+    padding: 10,
+  };
+
+  bricks = game.add.group();
+  for (let c = 0; c < brickInfo.count.col; c++) {
+    for (let r = 0; r < brickInfo.count.row; r++) {
+      let brickX =
+        c * (brickInfo.width + brickInfo.padding) + brickInfo.offset.left;
+      let brickY =
+        r * (brickInfo.height + brickInfo.padding) + brickInfo.offset.top;
+
+      newBrick = game.add.sprite(brickX, brickY, "brick");
+      game.physics.enable(newBrick, Phaser.Physics.ARCADE);
+      newBrick.body.immovable = true;
+      newBrick.anchor.set(0.5);
+      bricks.add(newBrick);
+    }
+  }
+};
