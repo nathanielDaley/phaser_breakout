@@ -43,10 +43,19 @@ function create() {
   //make ball collide with edge of the canvas
   ball.body.collideWorldBounds = true;
 
-  //make the ball bounce off the bounds of the canvas when it hits them
+  //make the ball bounce off the bounds of the canvas when it hits them...
   ball.body.bounce.set(1);
+  //...except the bottom bound
+  game.physics.arcade.checkCollision.down = false;
 
   ball.body.velocity.set(150, -150);
+
+  //if the ball exists the canvas end the game
+  ball.checkWorldBounds = true;
+  ball.events.onOutOfBounds.add(() => {
+    alert("Game over!");
+    location.reload();
+  }, this);
 
   //Prevent the ball from pushing the paddle
   paddle.body.immovable = true;
