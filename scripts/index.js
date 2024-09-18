@@ -47,4 +47,7 @@ function create() {
 function update() {
   //Make the ball bounce off the paddle
   game.physics.arcade.collide(ball, paddle);
+
+  //move the paddle to the middle of the screen or the mouse's x position if it is inside the canvas
+  paddle.x = game.input.x || game.world.width * 0.5;
 }
