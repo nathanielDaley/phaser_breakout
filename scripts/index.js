@@ -21,13 +21,20 @@ function preload() {
 function create() {
   game.physics.startSystem(Phaser.Physics.ARCADE);
 
-  ball = game.add.sprite(50, 50, "ball");
+  //set position and sprite of objects
+  ball = game.add.sprite(
+    game.world.width * 0.5,
+    game.world.height - 25,
+    "ball"
+  );
   paddle = game.add.sprite(
     game.world.width * 0.5,
     game.world.height - 5,
     "paddle"
   );
 
+  //set the point from which the objects are drawn
+  ball.anchor.set(0.5);
   paddle.anchor.set(0.5, 1);
 
   game.physics.enable(ball, Phaser.Physics.ARCADE);
@@ -39,7 +46,7 @@ function create() {
   //make the ball bounce off the bounds of the canvas when it hits them
   ball.body.bounce.set(1);
 
-  ball.body.velocity.set(150, 150);
+  ball.body.velocity.set(150, -150);
 
   //Prevent the ball from pushing the paddle
   paddle.body.immovable = true;
