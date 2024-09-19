@@ -28,16 +28,18 @@ function preload() {
   game.load.image("ball", "./images/ball.png");
   game.load.image("paddle", "./images/paddle.png");
   game.load.image("brick", "./images/brick.png");
+  game.load.spritesheet("ball", "./images/wobble.png", 20, 20);
 }
 function create() {
   game.physics.startSystem(Phaser.Physics.ARCADE);
 
-  //set position and sprite of objects
+  //set position and sprite and animations of objects
   ball = game.add.sprite(
     game.world.width * 0.5,
     game.world.height - 25,
     "ball"
   );
+  ball.animations.add("wobble", [0, 1, 0, 2, 0, 1, 0, 2, 0], 24);
   paddle = game.add.sprite(
     game.world.width * 0.5,
     game.world.height - 5,
@@ -91,7 +93,7 @@ function create() {
 }
 function update() {
   //Make the ball bounce off the paddle
-  game.physics.arcade.collide(ball, paddle);
+  game.physics.arcade.collide(ball, paddle, ballHitPaddle);
 
   //ball can hit bricks and when it does calls ballHitBrick
   //passes ball and brick to ballHitBrick
@@ -134,7 +136,14 @@ const initBricks = () => {
 };
 
 const ballHitBrick = (ball, brick) => {
-  brick.kill();
+  ball.animations.play("wobble");
+
+  const killTween = game.add.tween(brick.scale);
+  killTween.to({ x: 0, y: 0 }, 200, Phaser.Easing.Linear.None);
+  killTween.onComplete.addOnce(() => {
+    brick.kill();
+  }, this);
+  killTween.start();
 
   score += 10;
   scoreText.setText(`Points: ${score}`);
@@ -171,4 +180,8 @@ const ballLeaveScreen = () => {
     alert("You lost, game over!");
     location.reload();
   }
+};
+
+const ballHitPaddle = (ball, paddle) => {
+  ball.animations.play("wobble");
 };
