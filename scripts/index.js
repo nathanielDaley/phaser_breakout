@@ -11,6 +11,11 @@ let newBrick;
 let brickInfo;
 let scoreText;
 let score = 0;
+let lives = 3;
+let livesText;
+let lifeLostText;
+
+const textStyle = { font: "18px Arial", fill: "#0095DD" };
 
 function preload() {
   //Scale the canvas while respecting aspect ratio
@@ -58,20 +63,31 @@ function create() {
 
   //if the ball exists the canvas end the game
   ball.checkWorldBounds = true;
-  ball.events.onOutOfBounds.add(() => {
-    alert("Game over!");
-    location.reload();
-  }, this);
+  ball.events.onOutOfBounds.add(ballLeaveScreen, this);
 
   //Prevent the ball from pushing the paddle
   paddle.body.immovable = true;
 
   initBricks();
 
-  scoreText = game.add.text(5, 5, "Points: 0", {
-    font: "18px Arial",
-    fill: "#0095DD",
-  });
+  scoreText = game.add.text(5, 5, "Points: 0", textStyle);
+
+  livesText = game.add.text(
+    game.world.width - 5,
+    5,
+    `Lives: ${lives}`,
+    textStyle
+  );
+  livesText.anchor.set(1, 0);
+
+  lifeLostText = game.add.text(
+    game.world.width * 0.5,
+    game.world.height * 0.5,
+    "Life lost, click to continue",
+    textStyle
+  );
+  lifeLostText.anchor.set(0.5);
+  lifeLostText.visible = false;
 }
 function update() {
   //Make the ball bounce off the paddle
@@ -135,6 +151,24 @@ const ballHitBrick = (ball, brick) => {
   //if the are no bricks left win the game
   if (count_alive === 0) {
     alert("You won the game, congratulations!");
+    location.reload();
+  }
+};
+
+const ballLeaveScreen = () => {
+  lives--;
+
+  if (lives) {
+    livesText.setText(`Lives: ${lives}`);
+    lifeLostText.visible = true;
+    ball.reset(game.world.width * 0.5, game.world.height - 25);
+    paddle.reset(game.world.width * 0.5, game.world.height - 5);
+    game.input.onDown.addOnce(() => {
+      lifeLostText.visible = false;
+      ball.body.velocity.set(150, -150);
+    }, this);
+  } else {
+    alert("You lost, game over!");
     location.reload();
   }
 };
