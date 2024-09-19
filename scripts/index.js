@@ -9,6 +9,8 @@ let paddle;
 let bricks;
 let newBrick;
 let brickInfo;
+let scoreText;
+let score = 0;
 
 function preload() {
   //Scale the canvas while respecting aspect ratio
@@ -65,6 +67,11 @@ function create() {
   paddle.body.immovable = true;
 
   initBricks();
+
+  scoreText = game.add.text(5, 5, "Points: 0", {
+    font: "18px Arial",
+    fill: "#0095DD",
+  });
 }
 function update() {
   //Make the ball bounce off the paddle
@@ -112,4 +119,7 @@ const initBricks = () => {
 
 const ballHitBrick = (ball, brick) => {
   brick.kill();
+
+  score += 10;
+  scoreText.setText(`Points: ${score}`);
 };
