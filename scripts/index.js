@@ -122,4 +122,19 @@ const ballHitBrick = (ball, brick) => {
 
   score += 10;
   scoreText.setText(`Points: ${score}`);
+
+  let count_alive = 0;
+
+  //count how many bricks still exist
+  for (let i = 0; i < bricks.children.length; i++) {
+    if (bricks.children[i].alive) {
+      count_alive++;
+    }
+  }
+
+  //if the are no bricks left win the game
+  if (count_alive === 0) {
+    alert("You won the game, congratulations!");
+    location.reload();
+  }
 };
