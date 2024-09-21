@@ -4,16 +4,20 @@ const game = new Phaser.Game(480, 320, Phaser.CANVAS, null, {
   update,
 });
 
+// to assign phaser objects to
 let ball;
 let paddle;
 let bricks;
 let newBrick;
 let brickInfo;
 let scoreText;
-let score = 0;
-let lives = 3;
 let livesText;
 let lifeLostText;
+let startButton;
+
+let score = 0;
+let lives = 3;
+let playing = false;
 
 const textStyle = { font: "18px Arial", fill: "#0095DD" };
 
@@ -25,10 +29,10 @@ function preload() {
 
   game.stage.backgroundColor = "#eee";
 
-  game.load.image("ball", "./images/ball.png");
-  game.load.image("paddle", "./images/paddle.png");
-  game.load.image("brick", "./images/brick.png");
-  game.load.spritesheet("ball", "./images/wobble.png", 20, 20);
+  game.load.image("paddle", "../images/paddle.png");
+  game.load.image("brick", "../images/brick.png");
+  game.load.spritesheet("ball", "../images/wobble.png", 20, 20);
+  game.load.spritesheet("button", "../images/button.png", 120, 40);
 }
 function create() {
   game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -61,8 +65,6 @@ function create() {
   //...except the bottom bound
   game.physics.arcade.checkCollision.down = false;
 
-  ball.body.velocity.set(150, -150);
-
   //if the ball exists the canvas end the game
   ball.checkWorldBounds = true;
   ball.events.onOutOfBounds.add(ballLeaveScreen, this);
@@ -90,6 +92,18 @@ function create() {
   );
   lifeLostText.anchor.set(0.5);
   lifeLostText.visible = false;
+
+  startButton = game.add.button(
+    game.world.width * 0.5,
+    game.world.height * 0.5,
+    "button",
+    startGame,
+    this,
+    1,
+    0,
+    2
+  );
+  startButton.anchor.set(0.5);
 }
 function update() {
   //Make the ball bounce off the paddle
@@ -184,4 +198,9 @@ const ballLeaveScreen = () => {
 
 const ballHitPaddle = (ball, paddle) => {
   ball.animations.play("wobble");
+};
+
+const startGame = () => {
+  startButton.destroy();
+  ball.body.velocity.set(150, -150);
 };
